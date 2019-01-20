@@ -9,7 +9,7 @@ object TriangleNumbers {
 
   def main(args: Array[String]): Unit = {
     val t = new TriangleNumbers(7, 6, 3, 3, 8, 5, 11, 2, 10)
-    println(t.paths())
+    println(t.minimumPath())
   }
 }
 
@@ -81,5 +81,8 @@ class TriangleNumbers(numbers: Int*) {
     }
   }
 
-  def paths(): List[List[Int]] = paths(Node(0,0))
+  def paths(): List[List[Int]] = paths(Node(0, 0))
+
+  def minimumPath(): (List[Int], Int) = paths().map(p => (p, p.sum)).minBy(_._2)
+
 }
