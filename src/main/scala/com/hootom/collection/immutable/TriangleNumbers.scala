@@ -6,12 +6,6 @@ import scalax.collection.GraphPredef._
 
 object TriangleNumbers {
   def apply(numbers: Int*): TriangleNumbers = new TriangleNumbers(numbers: _*)
-
-  def main(args: Array[String]): Unit = {
-    val t = TriangleNumbers(7, 6, 3, 3, 8, 5, 11, 2, 10, 9)
-    println(t.paths())
-    println(t.minimumPath())
-  }
 }
 
 case class Node(x: Int, y: Int) {
