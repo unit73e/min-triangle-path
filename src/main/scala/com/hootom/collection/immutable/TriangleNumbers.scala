@@ -39,6 +39,8 @@ case class Node(x: Int, y: Int) {
 
 class TriangleNumbers(numbers: Int*) {
 
+  private val RootNode = Node(0, 0)
+
   val values: Map[Node, Int] = initValues
   val graph: Graph[Node, DiEdge] = initGraph(numbers.size)
 
@@ -54,14 +56,14 @@ class TriangleNumbers(numbers: Int*) {
 
   def initGraph(n: Int): Graph[Node, DiEdge] = n match {
     case 0 => Graph()
-    case 1 => Graph(Node(0, 0))
+    case 1 => Graph(RootNode)
     case _ => Graph(edges(values.keySet): _*)
   }
 
   def initValues: Map[Node, Int] = numbers match {
     case Nil => Map()
     case _ =>
-      (List(Node(0, 0) -> numbers.head) /: numbers.tail) { (acc, i) =>
+      (List(RootNode -> numbers.head) /: numbers.tail) { (acc, i) =>
         acc.head._1.next -> i :: acc
       }.toMap
   }
@@ -79,8 +81,24 @@ class TriangleNumbers(numbers: Int*) {
     }
   }
 
-  def paths(): List[List[Int]] = paths(Node(0, 0))
+  def paths(): List[List[Int]] = paths(RootNode)
 
-  def minimumPath(): (List[Int], Int) = paths().map(p => (p, p.sum)).minBy(_._2)
+  private def pathSums(n: Node): List[Int] =
+    (n.left(graph), n.right(graph)) match {
+      case (None, None) => List(value(n))
+      case (Some(l), None) => pathSums(l).map(e => value(n) + e)
+      case (None, Some(r)) => pathSums(r).map(e => value(n) + e)
+      case (Some(l), Some(r)) => (pathSums(l) ++ pathSums(r)).map(e => value(n) + e)
+    }
+
+  def pathSums(): List[Int] = pathSums(RootNode)
+
+  private def pathSumsMin(): Int = pathSums().min
+
+  def minimumPath(): (List[Int], Int) = {
+    val min = pathSumsMin()
+    println("Minimum " + min)
+    (paths().filter(_.sum == min).head, min)
+  }
 
 }
