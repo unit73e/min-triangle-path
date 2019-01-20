@@ -8,7 +8,8 @@ object TriangleNumbers {
   def apply(numbers: Int*): TriangleNumbers = new TriangleNumbers(numbers: _*)
 
   def main(args: Array[String]): Unit = {
-    val t = new TriangleNumbers(7, 6, 3, 3, 8, 5, 11, 2, 10)
+    val t = TriangleNumbers(7, 6, 3, 3, 8, 5, 11, 2, 10, 9)
+    println(t.paths())
     println(t.minimumPath())
   }
 }
@@ -21,22 +22,25 @@ case class Node(x: Int, y: Int) {
 
   def next: Node = if (lastInRow) Node(0, y + 1) else Node(x + 1, y)
 
-  def left: Node = Node(x, y + 1)
+  def leftNode: Node = Node(x, y + 1)
 
-  def right: Node = left.next
+  def rightNode: Node = leftNode.next
 
-  def leftEdge: DiEdge[Node] = this ~> left
+  def leftEdge: DiEdge[Node] = this ~> leftNode
 
-  def rightEdge: DiEdge[Node] = this ~> right
+  def rightEdge: DiEdge[Node] = this ~> rightNode
 
-  def left(g: Graph[Node, DiEdge]): Option[g.NodeT] = g find left
+  def leftNode(g: Graph[Node, DiEdge]): Option[g.NodeT] = g find leftNode
 
-  def right(g: Graph[Node, DiEdge]): Option[g.NodeT] = g find right
+  def rightNode(g: Graph[Node, DiEdge]): Option[g.NodeT] = g find rightNode
 
   def leftEdge(g: Graph[Node, DiEdge]): Option[g.EdgeT] = g find leftEdge
 
   def rightEdge(g: Graph[Node, DiEdge]): Option[g.EdgeT] = g find rightEdge
 
+  def left(g: Graph[Node, DiEdge]): Option[g.NodeT] = leftEdge(g).map(_._2)
+
+  def right(g: Graph[Node, DiEdge]): Option[g.NodeT] = rightEdge(g).map(_._2)
 }
 
 class TriangleNumbers(numbers: Int*) {
@@ -45,9 +49,9 @@ class TriangleNumbers(numbers: Int*) {
   val graph: Graph[Node, DiEdge] = initGraph(numbers.size)
 
   def edges(nodes: Set[Node]): List[DiEdge[Node]] = {
-    def leftEdge(n: Node): Option[DiEdge[Node]] = if (nodes contains n.left) Some(n.leftEdge) else None
+    def leftEdge(n: Node): Option[DiEdge[Node]] = if (nodes contains n.leftNode) Some(n.leftEdge) else None
 
-    def rightEdge(n: Node): Option[DiEdge[Node]] = if (nodes contains n.right) Some(n.rightEdge) else None
+    def rightEdge(n: Node): Option[DiEdge[Node]] = if (nodes contains n.rightNode) Some(n.rightEdge) else None
 
     def adjacent(n: Node): List[DiEdge[Node]] = leftEdge(n).toList ++ rightEdge(n).toList
 
