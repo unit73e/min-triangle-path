@@ -4,8 +4,6 @@ import scalax.collection.Graph
 import scalax.collection.GraphEdge._
 import scalax.collection.GraphPredef._
 
-import scala.annotation.tailrec
-
 object TriangleNumbers {
   def apply(numbers: Int*): TriangleNumbers = new TriangleNumbers(numbers: _*)
 }
@@ -41,30 +39,20 @@ class TriangleNumbers(numbers: Int*) {
   val values: Map[Node, Int] = initValues
   val graph: Graph[Node, DiEdge] = initGraph(numbers.size)
 
-  private def next(g: Graph[Node, DiEdge], n: Node): Graph[Node, DiEdge] = n left g match {
-    case None => Graph(n.leftEdge)
-    case _ => if (n.lastInRow) Graph(n.rightEdge) else Graph(n.rightEdge, n.next.leftEdge)
-  }
+  def edges(nodes: Set[Node]): List[DiEdge[Node]] = {
+    def leftEdge(n: Node): Option[DiEdge[Node]] = if (nodes contains n.left) Some(n.leftEdge) else None
 
-  private def add(g: Graph[Node, DiEdge], n: Node): Graph[Node, DiEdge] = g ++ next(g, n)
+    def rightEdge(n: Node): Option[DiEdge[Node]] = if (nodes contains n.right) Some(n.rightEdge) else None
 
-  @tailrec
-  private def add(g: Graph[Node, DiEdge], n: Node, s: Int): Graph[Node, DiEdge] = s match {
-    case 1 => g
-    case _ =>
-      val gs = add(g, n)
-      n right gs match {
-        case None => add(gs, n, s - 1)
-        case _ => add(gs, n.next, s - 1)
-      }
+    def adjacent(n: Node): List[DiEdge[Node]] = leftEdge(n).toList ++ rightEdge(n).toList
+
+    nodes.map(adjacent).toList.flatten
   }
 
   def initGraph(n: Int): Graph[Node, DiEdge] = n match {
     case 0 => Graph()
     case 1 => Graph(Node(0, 0))
-    case _ =>
-      val rootNode = Node(0, 0)
-      add(Graph(rootNode), rootNode, n)
+    case _ => Graph(edges(values.keySet): _*)
   }
 
   def initValues: Map[Node, Int] = numbers match {
