@@ -6,6 +6,11 @@ import scalax.collection.GraphPredef._
 
 object TriangleNumbers {
   def apply(numbers: Int*): TriangleNumbers = new TriangleNumbers(numbers: _*)
+
+  def main(args: Array[String]): Unit = {
+    val t = new TriangleNumbers(7, 6, 3, 3, 8, 5, 11, 2, 10)
+    println(t.paths())
+  }
 }
 
 case class Node(x: Int, y: Int) {
@@ -63,4 +68,18 @@ class TriangleNumbers(numbers: Int*) {
       }.toMap
   }
 
+  private def value(n: Node): Int = values getOrElse(n,
+    throw new IllegalArgumentException("Node " + n + " exists in the graph but does not have a value.")
+  )
+
+  private def paths(n: Node): List[List[Int]] = {
+    (n.left(graph), n.right(graph)) match {
+      case (None, None) => List(List(value(n)))
+      case (Some(l), None) => paths(l).map(e => value(n) :: e)
+      case (None, Some(r)) => paths(r).map(e => value(n) :: e)
+      case (Some(l), Some(r)) => (paths(l) ++ paths(r)).map(e => value(n) :: e)
+    }
+  }
+
+  def paths(): List[List[Int]] = paths(Node(0,0))
 }
