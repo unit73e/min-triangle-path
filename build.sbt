@@ -9,5 +9,6 @@ lazy val root = (project in file(".")).
     )),
     name := "min-triangle-path",
     libraryDependencies += "org.scala-graph" %% "graph-core" % "1.12.5",
+    libraryDependencies += "com.lihaoyi" %% "fastparse" % "2.0.5",
     libraryDependencies += scalaTest % Test
   )
