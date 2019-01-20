@@ -25,3 +25,10 @@ Which will give the following result:
 ```
 7 + 6 + 3 + 2 = 18
 ```
+
+## TODO
+
+The current solution performs poorly:
+
+- Goes through all paths to get the minimum
+- Creates all paths to construct the minimum path
