@@ -40,4 +40,4 @@ It's possible to have an incomplete triangle:
  3
 ```
 
-The minimum path is calculated either way. It should be `7 + 6 = 7`.
+The minimum path is calculated either way. It should be `7 + 6 = 13`.
