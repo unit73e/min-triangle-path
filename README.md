@@ -42,7 +42,5 @@ Which will give the following result:
 
 Some code could be further optimized:
 
-- The minimum path search could be short circuited in if a path is
-  already over a known minimum
 - The file is being entirely to memory into a list but each block could
   be added to the graph instead
