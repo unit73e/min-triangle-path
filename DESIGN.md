@@ -6,13 +6,7 @@ This document details the design decisions for this application.
 
 The representation of a triangle of numbers is as follows:
 
-```
-      7
-     ↙ ↘
-    6   3
-   ↙ ↘ ↙ ↘
-  3   8   5
-```
+![](images/short.png)
 
 A triangle of numbers is a [direct acyclic graph][dag] with the
 following characteristics:
@@ -50,25 +44,15 @@ To create the edges first we need to think of unique identifiers for
 each node. Note that the triangle numbers graph can be represented in a
 matrix:
 
-```
-   | 0 | 1 | 2
----------------
- 0 | 7 |   |
----------------
- 1 | 6 | 3 |
----------------
- 2 | 3 | 8 | 5
-```
+|     |**0**|**1**|**2**|
+|-----|-----|-----|-----|
+|**0**| 7   |     |     |
+|**1**| 6   | 3   |     |
+|**2**| 3   | 8   | 5   |
 
 Meaning the nodes can be represented as follows (without the values):
 
-```
-      (0,0)
-      ↙   ↘
-   (0,1) (1,1)
-   ↙  ↘   ↙  ↘
-(0,2) (1,2) (2,2)
-```
+![](images/short-keys.png)
 
 The advantage of this representation is that it's easy to know the edges
 of any given node:
@@ -86,7 +70,7 @@ based on the set of nodes.
 
 Than the edges only have to be passed to Scala Graph:
 
-```
+```scala
 val graph = Graph(edges)
 ```
 
@@ -100,15 +84,7 @@ shortest path from one node to another.
 Instead of having each node associated with a value, the graph can also
 be represented as follows:
 
-```
-          (0,0)
-         7↙  7↘
-       (0,1) (1,1)
-      6↙  6↘ 3↙ 3↘
-    (0,2) (1,2) (2,2)
-   3↙  3↘ 8↙ 8↘ 5↙ 5↘
- (0,3) (1,3) (2,3) (3,3)
-```
+![](images/short-weights.png)
 
 The paths represent the triangle of numbers values instead of the nodes.
 It ends up being the same, except the graph is larger.

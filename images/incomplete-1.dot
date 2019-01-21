@@ -1,0 +1,14 @@
+digraph C {
+  graph [ bgcolor="transparent" ];
+  node [ style=filled ];
+
+  A -> B
+  A -> C
+  B -> D
+
+  A [label=7]
+  B [label=6]
+  C [label=3]
+  D [label=3]
+}
+

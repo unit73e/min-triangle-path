@@ -5,15 +5,7 @@ numbers.
 
 A triangle of numbers can be represented like so:
 
-```
-      7
-     ↙ ↘
-    6   6
-   ↙ ↘ ↙ ↘
-  3   8   5
- ↙ ↘ ↙ ↘ ↙ ↘
-11  2   10  9
-```
+![logo](images/triangle-numbers.png)
 
 A path is a sequence of connected nodes. For example,
 `7 -> 6 -> 3 -> 11` is path from the left the triangle.
@@ -50,7 +42,6 @@ Which will give the following result:
 
 Some code could be further optimized:
 
-- Some parts of minimum path code are being executed twice
 - The minimum path search could be short circuited in if a path is
   already over a known minimum
 - The file is being entirely to memory into a list but each block could

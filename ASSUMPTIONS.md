@@ -5,13 +5,9 @@
 The a new number is always inserted from top to bottom, left to right.
 For example:
 
-```
-     7          7           7
-    ↙ ↘        ↙ ↘         ↙ ↘
-   6   6      6   6       6   6
-  ↙          ↙ ↘ ↙       ↙ ↘ ↙ ↘
- 3          3   8       3   8   5
-```
+|1                           |2                           |3                           |
+|----------------------------|----------------------------|----------------------------|
+|![](images/incomplete-1.png)|![](images/incomplete-2.png)|![](images/incomplete-3.png)|
 
 ## Input
 
@@ -32,12 +28,6 @@ lines. The following input files give the same result:
 
 It's possible to have an incomplete triangle:
 
-```
-     7
-    ↙ ↘
-   6   6
-  ↙
- 3
-```
+![](images/incomplete-1.png)
 
-The minimum path is calculated either way. It should be `7 + 6 = 13`.
+The minimum path is calculated either way. It should be `7 + 3 = 10`.

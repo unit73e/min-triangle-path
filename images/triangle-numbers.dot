@@ -1,0 +1,29 @@
+digraph C {
+  graph [ bgcolor="transparent" ];
+  node [ style=filled ];
+
+  A -> B
+  A -> C
+  B -> D
+  B -> E
+  C -> E
+  C -> F
+  D -> G
+  D -> H
+  E -> H
+  E -> I
+  F -> I
+  F -> J
+
+  A [label=7]
+  B [label=6]
+  C [label=3]
+  D [label=3]
+  E [label=8]
+  F [label=5]
+  G [label=11]
+  H [label=2]
+  I [label=10]
+  J [label=9]
+}
+
