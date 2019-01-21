@@ -28,7 +28,10 @@ Which will give the following result:
 
 ## TODO
 
-The current solution performs poorly:
+Some code could be further optimized:
 
-- Goes through all paths to get the minimum
-- Creates all paths to construct the minimum path
+- Some parts of minimum path code are being executed twice
+- The minimum path search could be short circuited in if a path is
+  already over a known minimum
+- The file is being entirely to memory into a list but each block could
+  be added to the graph instead

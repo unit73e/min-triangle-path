@@ -1,11 +1,20 @@
 package com.hootom.collection.immutable
 
 import scalax.collection.Graph
-import scalax.collection.GraphEdge._
 import scalax.collection.GraphPredef._
+import scalax.collection.edge.Implicits._
+import scalax.collection.edge.WDiEdge
+
+import scala.collection.Set
+
 
 object TriangleNumbers {
   def apply(numbers: Int*): TriangleNumbers = new TriangleNumbers(numbers: _*)
+
+  def main(args: Array[String]): Unit = {
+    val numbers = TriangleNumbers(7, 6, 6, 3, 8, 5, 11, 2, 10, 9)
+    println(numbers.minimumPath())
+  }
 }
 
 case class Node(x: Int, y: Int) {
@@ -20,21 +29,10 @@ case class Node(x: Int, y: Int) {
 
   def rightNode: Node = leftNode.next
 
-  def leftEdge: DiEdge[Node] = this ~> leftNode
+  def leftEdge(weight: Int): WDiEdge[Node] = this ~> leftNode % weight
 
-  def rightEdge: DiEdge[Node] = this ~> rightNode
+  def rightEdge(weight: Int): WDiEdge[Node] = this ~> rightNode % weight
 
-  def leftNode(g: Graph[Node, DiEdge]): Option[g.NodeT] = g find leftNode
-
-  def rightNode(g: Graph[Node, DiEdge]): Option[g.NodeT] = g find rightNode
-
-  def leftEdge(g: Graph[Node, DiEdge]): Option[g.EdgeT] = g find leftEdge
-
-  def rightEdge(g: Graph[Node, DiEdge]): Option[g.EdgeT] = g find rightEdge
-
-  def left(g: Graph[Node, DiEdge]): Option[g.NodeT] = leftEdge(g).map(_._2)
-
-  def right(g: Graph[Node, DiEdge]): Option[g.NodeT] = rightEdge(g).map(_._2)
 }
 
 class TriangleNumbers(numbers: Int*) {
@@ -42,25 +40,19 @@ class TriangleNumbers(numbers: Int*) {
   private val RootNode = Node(0, 0)
 
   val values: Map[Node, Int] = initValues
-  val graph: Graph[Node, DiEdge] = initGraph(numbers.size)
+  val graph: Graph[Node, WDiEdge] = initGraph()
 
-  def edges(nodes: Set[Node]): List[DiEdge[Node]] = {
-    def leftEdge(n: Node): Option[DiEdge[Node]] = if (nodes contains n.leftNode) Some(n.leftEdge) else None
+  private def makeEdges(): List[WDiEdge[Node]] = {
+    def adjacent(n: Node): List[WDiEdge[Node]] = (values get n)
+      .map(v => n.leftEdge(v) :: n.rightEdge(v) :: Nil)
+      .getOrElse(List.empty)
 
-    def rightEdge(n: Node): Option[DiEdge[Node]] = if (nodes contains n.rightNode) Some(n.rightEdge) else None
-
-    def adjacent(n: Node): List[DiEdge[Node]] = leftEdge(n).toList ++ rightEdge(n).toList
-
-    nodes.map(adjacent).toList.flatten
+    values.keys.map(adjacent).toList.flatten
   }
 
-  def initGraph(n: Int): Graph[Node, DiEdge] = n match {
-    case 0 => Graph()
-    case 1 => Graph(RootNode)
-    case _ => Graph(edges(values.keySet): _*)
-  }
+  private def initGraph(): Graph[Node, WDiEdge] = Graph(makeEdges(): _*)
 
-  def initValues: Map[Node, Int] = numbers match {
+  private def initValues: Map[Node, Int] = numbers match {
     case Nil => Map()
     case _ =>
       (List(RootNode -> numbers.head) /: numbers.tail) { (acc, i) =>
@@ -68,37 +60,15 @@ class TriangleNumbers(numbers: Int*) {
       }.toMap
   }
 
-  private def value(n: Node): Int = values getOrElse(n,
-    throw new IllegalArgumentException("Node " + n + " exists in the graph but does not have a value.")
-  )
-
-  private def paths(n: Node): List[List[Int]] = {
-    (n.left(graph), n.right(graph)) match {
-      case (None, None) => List(List(value(n)))
-      case (Some(l), None) => paths(l).map(e => value(n) :: e)
-      case (None, Some(r)) => paths(r).map(e => value(n) :: e)
-      case (Some(l), Some(r)) => (paths(l) ++ paths(r)).map(e => value(n) :: e)
-    }
-  }
-
-  def paths(): List[List[Int]] = paths(RootNode)
-
-  private def pathSums(n: Node): List[Int] =
-    (n.left(graph), n.right(graph)) match {
-      case (None, None) => List(value(n))
-      case (Some(l), None) => pathSums(l).map(e => value(n) + e)
-      case (None, Some(r)) => pathSums(r).map(e => value(n) + e)
-      case (Some(l), Some(r)) => (pathSums(l) ++ pathSums(r)).map(e => value(n) + e)
-    }
-
-  def pathSums(): List[Int] = pathSums(RootNode)
-
-  private def pathSumsMin(): Int = pathSums().min
+  def leaves: Set[graph.NodeT] = graph.nodes.filter(n => !n.hasSuccessors)
 
   def minimumPath(): (List[Int], Int) = {
-    val min = pathSumsMin()
-    println("Minimum " + min)
-    (paths().filter(_.sum == min).head, min)
+    // TODO: This could be optimized
+    // It's first getting the leave that gets the minimum path and only than getting the minimum path
+    // It's getting converting a path to a list of ints and calculating the weight again
+    val n = graph get RootNode
+    val minLeave = leaves minBy (l => (n shortestPathTo l).get.weight)
+    val list = (n shortestPathTo minLeave).get.edges.map(_.weight.toInt).toList
+    (list, list.sum)
   }
-
 }
