@@ -1,7 +1,27 @@
 # Minimum Triangle Path
 
-This is an application to calculate the minimum paths in a triangle of
+This is an application to calculate the minimal path in a triangle of
 numbers.
+
+A triangle of numbers can be represented like so:
+
+```
+      7
+     ↙ ↘
+    6   6
+   ↙ ↘ ↙ ↘
+  3   8   5
+ ↙ ↘ ↙ ↘ ↙ ↘
+11  2   10  9
+```
+
+A path is a sequence of connected nodes. For example,
+`7 -> 6 -> 3 -> 11` is path from the left the triangle.
+
+The minimal path is the path whose sum of values is lower than any other
+path. In the following example `7 -> 6 -> 3 -> 2` is the minimal path.
+
+This application only gives one of the possible minimal paths.
 
 ## Run
 
