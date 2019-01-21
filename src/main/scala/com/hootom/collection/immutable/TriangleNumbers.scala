@@ -58,12 +58,13 @@ class TriangleNumbers(numbers: Int*) {
   def leaves: Set[graph.NodeT] = graph.nodes.filter(n => !n.hasSuccessors)
 
   def minimumPath(): (List[Int], Int) = {
-    // TODO: This could be optimized
-    // It's first getting the leave that gets the minimum path and only than getting the minimum path
-    // It's getting converting a path to a list of ints and calculating the weight again
     val n = graph get RootNode
-    val minLeave = leaves minBy (l => (n shortestPathTo l).get.weight)
-    val list = (n shortestPathTo minLeave).get.edges.map(_.weight.toInt).toList
-    (list, list.sum)
+    val minPath = ((n shortestPathTo leaves.head).get /: leaves.tail) ((a, b) => {
+      val p = (n shortestPathTo b).get
+      if (p.weight < a.weight) p else a
+    })
+    val minWeight = minPath.weight
+    val list = minPath.edges.map(_.weight.toInt).toList
+    (list, minWeight.toInt)
   }
 }
