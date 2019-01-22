@@ -40,22 +40,6 @@ case class Node private(x: Int, y: Int) {
 
   /** True if the node is the last in its row */
   def lastInRow: Boolean = x == y
-
-  /** The next node */
-  def next: Node = if (lastInRow) Node(0, y + 1) else Node(x + 1, y)
-
-  /** The adjacent left node */
-  def leftNode: Node = Node(x, y + 1)
-
-  /** The adjacent right node */
-  def rightNode: Node = leftNode.next
-
-  /** The left edge */
-  def leftEdge(weight: Int): WDiEdge[Node] = this ~> leftNode % weight
-
-  /** The right edge */
-  def rightEdge(weight: Int): WDiEdge[Node] = this ~> rightNode % weight
-
 }
 
 /**
@@ -70,8 +54,33 @@ class TriangleNumbers private(numbers: Int*) {
 
   /** Creates the edges of the triangle numbers graph */
   private def makeEdges(): List[WDiEdge[Node]] = {
+
+    /** Returns the next node to a given node, counting from left to right, top to bottom. */
+    def next(n: Node): Node = if (n.lastInRow) Node(0, n.y + 1) else Node(n.x + 1, n.y)
+
+    /** Returns the left node of a given node */
+    def leftNode(n: Node): Node = Node(n.x, n.y + 1)
+
+    /** Returns the right node of a given node */
+    def rightNode(n: Node): Node = next(leftNode(n))
+
+    /** Returns the left edge of a given node */
+    def leftEdge(n: Node, weight: Int): WDiEdge[Node] = n ~> leftNode(n) % weight
+
+    /** Returns the right edge of a given node */
+    def rightEdge(n: Node, weight: Int): WDiEdge[Node] = n ~> rightNode(n) % weight
+
+    /** Returns a map of nodes and values */
+    def values: Map[Node, Int] = numbers match {
+      case Nil => Map()
+      case _ => (List(RootNode -> numbers.head) /: numbers.tail) { (acc, i) =>
+        next(acc.head._1) -> i :: acc
+      }.toMap
+    }
+
+    /** Returns the adjacent nodes of a given node */
     def adjacent(n: Node, values: Map[Node, Int]): List[WDiEdge[Node]] = (values get n)
-      .map(v => n.leftEdge(v) :: n.rightEdge(v) :: Nil)
+      .map(v => leftEdge(n, v) :: rightEdge(n, v) :: Nil)
       .getOrElse(List.empty)
 
     val nodes = values.keys
@@ -81,17 +90,10 @@ class TriangleNumbers private(numbers: Int*) {
   /** Initializes the tree numbers graph */
   private def initGraph(): Graph[Node, WDiEdge] = Graph(makeEdges(): _*)
 
-  /** Creates a  numbers values */
-  private def values: Map[Node, Int] = numbers match {
-    case Nil => Map()
-    case _ => (List(RootNode -> numbers.head) /: numbers.tail) { (acc, i) =>
-      acc.head._1.next -> i :: acc
-    }.toMap
-  }
-
   /** Returns the leaves of the graph */
   private def leaves: Set[graph.NodeT] = graph.nodes.filter(n => !n.hasSuccessors)
 
+  /** Returns the root node of this graph */
   private def rootNode: Option[graph.NodeT] = graph find RootNode
 
   /** Returns the first minimal path found in the triangle of numbers */
