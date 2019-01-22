@@ -20,7 +20,7 @@ This application only gives one of the possible minimal paths.
 To run this application:
 
 ```
-$ sbt run <file>
+$ sbt "run <file>"
 ```
 
 Where the file can be:
@@ -36,4 +36,11 @@ Which will give the following result:
 
 ```
 7 + 6 + 3 + 2 = 18
+```
+
+The `examples` directory contains file examples:
+
+```
+$ sbt "run examples/test-file-3.txt"
+7 + 6 = 13
 ```
