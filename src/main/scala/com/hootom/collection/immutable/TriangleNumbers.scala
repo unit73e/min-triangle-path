@@ -96,8 +96,8 @@ class TriangleNumbers private(numbers: Int*) {
 
   private def rootNode: Option[graph.NodeT] = graph find RootNode
 
-  /** Returns the first minimum path found in the triangle of numbers */
-  def minimumPath(): (List[Int], Int) = {
+  /** Returns the first minimal path found in the triangle of numbers */
+  def minimalPath(): (List[Int], Int) = {
     rootNode match {
       case None => (List(), 0)
       case Some(n) =>

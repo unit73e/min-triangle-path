@@ -24,6 +24,6 @@ object Main extends App {
   }
 
   val numbers = TriangleNumbers(list: _*)
-  val minPath = numbers.minimumPath()
+  val minPath = numbers.minimalPath()
   println(minPath._1.mkString(" + ") + " = " + minPath._2)
 }
