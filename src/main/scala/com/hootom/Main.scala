@@ -16,13 +16,14 @@ object Main extends App {
   for (line <- Source.fromFile(args(0)).getLines) {
     NumbersParser.parse(line) match {
       case fastparse.Parsed.Success(v, _) => list ++= v
-      case fastparse.Parsed.Failure(e, _, _) =>
-        println(e)
+      case f@fastparse.Parsed.Failure(_, _, e) =>
+        println("Error found in file.")
+        println(f.trace().longMsg)
         System.exit(1)
     }
   }
 
-  val numbers = TriangleNumbers(list:_*)
+  val numbers = TriangleNumbers(list: _*)
   val minPath = numbers.minimumPath()
   println(minPath._1.mkString(" + ") + " = " + minPath._2)
 }
