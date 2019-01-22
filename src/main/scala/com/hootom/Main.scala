@@ -16,7 +16,7 @@ object Main extends App {
   for (line <- Source.fromFile(args(0)).getLines) {
     NumbersParser.parse(line) match {
       case fastparse.Parsed.Success(v, _) => list ++= v
-      case f@fastparse.Parsed.Failure(_, _, e) =>
+      case f@fastparse.Parsed.Failure(_, _, _) =>
         println("Error found in file.")
         println(f.trace().longMsg)
         System.exit(1)
