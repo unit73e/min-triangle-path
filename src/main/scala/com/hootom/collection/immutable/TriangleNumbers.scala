@@ -66,29 +66,27 @@ case class Node private(x: Int, y: Int) {
 class TriangleNumbers private(numbers: Int*) {
 
   private val RootNode = Node(0, 0)
-
-  private val values: Map[Node, Int] = initValues
   private val graph: Graph[Node, WDiEdge] = initGraph()
 
   /** Creates the edges of the triangle numbers graph */
   private def makeEdges(): List[WDiEdge[Node]] = {
-    def adjacent(n: Node): List[WDiEdge[Node]] = (values get n)
+    def adjacent(n: Node, values: Map[Node, Int]): List[WDiEdge[Node]] = (values get n)
       .map(v => n.leftEdge(v) :: n.rightEdge(v) :: Nil)
       .getOrElse(List.empty)
 
-    values.keys.map(adjacent).toList.flatten
+    val nodes = values.keys
+    nodes.map(n => adjacent(n, values)).toList.flatten
   }
 
   /** Initializes the tree numbers graph */
   private def initGraph(): Graph[Node, WDiEdge] = Graph(makeEdges(): _*)
 
-  /** Initializes the tree numbers values */
-  private def initValues: Map[Node, Int] = numbers match {
+  /** Creates a  numbers values */
+  private def values: Map[Node, Int] = numbers match {
     case Nil => Map()
-    case _ =>
-      (List(RootNode -> numbers.head) /: numbers.tail) { (acc, i) =>
-        acc.head._1.next -> i :: acc
-      }.toMap
+    case _ => (List(RootNode -> numbers.head) /: numbers.tail) { (acc, i) =>
+      acc.head._1.next -> i :: acc
+    }.toMap
   }
 
   /** Returns the leaves of the graph */
