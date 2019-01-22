@@ -37,10 +37,3 @@ Which will give the following result:
 ```
 7 + 6 + 3 + 2 = 18
 ```
-
-## TODO
-
-Some code could be further optimized:
-
-- The file is being entirely to memory into a list but each block could
-  be added to the graph instead
