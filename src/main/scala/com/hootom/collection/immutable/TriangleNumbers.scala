@@ -96,16 +96,21 @@ class TriangleNumbers private(numbers: Int*) {
 
   /** Returns the first minimal path found in the triangle of numbers */
   def minimalPath(): (List[Int], Int) = {
+
+    /** Shortest path from a node to another */
+    def shortestPathTo(from: graph.NodeT, to: graph.NodeT): (graph.Path, Double) = {
+      val sp = (from shortestPathTo to).get // assuming there's always a path
+      (sp, sp.weight.toInt)
+    }
+
     rootNode match {
       case None => (List(), 0)
       case Some(n) =>
-        val minPath = ((n shortestPathTo leaves.head).get /: leaves.tail) ((a, b) => {
-          val p = (n shortestPathTo b).get
-          if (p.weight < a.weight) p else a
+        val minPath = (shortestPathTo(n, leaves.head) /: leaves.tail) ((a, b) => {
+          val p = shortestPathTo(n, b)
+          if (p._2 < a._2) p else a
         })
-        val minWeight = minPath.weight
-        val list = minPath.edges.map(_.weight.toInt).toList
-        (list, minWeight.toInt)
+        (minPath._1.edges.map(_.weight.toInt).toList, minPath._2.toInt)
     }
   }
 }
