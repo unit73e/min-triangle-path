@@ -94,15 +94,20 @@ class TriangleNumbers private(numbers: Int*) {
   /** Returns the leaves of the graph */
   private def leaves: Set[graph.NodeT] = graph.nodes.filter(n => !n.hasSuccessors)
 
+  private def rootNode: Option[graph.NodeT] = graph find RootNode
+
   /** Returns the first minimum path found in the triangle of numbers */
   def minimumPath(): (List[Int], Int) = {
-    val n = graph get RootNode
-    val minPath = ((n shortestPathTo leaves.head).get /: leaves.tail) ((a, b) => {
-      val p = (n shortestPathTo b).get
-      if (p.weight < a.weight) p else a
-    })
-    val minWeight = minPath.weight
-    val list = minPath.edges.map(_.weight.toInt).toList
-    (list, minWeight.toInt)
+    rootNode match {
+      case None => (List(), 0)
+      case Some(n) =>
+        val minPath = ((n shortestPathTo leaves.head).get /: leaves.tail) ((a, b) => {
+          val p = (n shortestPathTo b).get
+          if (p.weight < a.weight) p else a
+        })
+        val minWeight = minPath.weight
+        val list = minPath.edges.map(_.weight.toInt).toList
+        (list, minWeight.toInt)
+    }
   }
 }

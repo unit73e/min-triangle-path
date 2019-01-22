@@ -11,4 +11,7 @@ class TriangleNumbersSpec extends FlatSpec with Matchers {
     assert((List(1, 0, 1, 0), 2) == TriangleNumbers(1, 0, 1, 6, 1, 5, 11, 2, 0, 9).minimumPath())
   }
 
+  "An empty triangle of numbers" should "still get the first found minimal path" in {
+    assert((List(), 0) == TriangleNumbers().minimumPath())
+  }
 }
