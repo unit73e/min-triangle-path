@@ -1,7 +1,7 @@
 package com.hootom
 
 import com.hootom.collection.immutable.TriangleNumbers
-import com.hootom.parser.NumberParser
+import com.hootom.parser.NumbersParser
 
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
@@ -14,7 +14,7 @@ object Main extends App {
 
   val list = ListBuffer[Int]()
   for (line <- Source.fromFile(args(0)).getLines) {
-    NumberParser.parse(line) match {
+    NumbersParser.parse(line) match {
       case fastparse.Parsed.Success(v, _) => list ++= v
       case fastparse.Parsed.Failure(e, _, _) =>
         println(e)
