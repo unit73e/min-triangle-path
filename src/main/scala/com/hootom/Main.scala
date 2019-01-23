@@ -8,7 +8,8 @@ import scala.io.Source
 
 object Main extends App {
   if (args.length != 1) {
-    println("Usage: app <file>")
+    println("File argument missing.")
+    println("Usage: <run-command> <file>")
     System.exit(1)
   }
 
